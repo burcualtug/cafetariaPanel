@@ -140,7 +140,7 @@ class LoginUserActivity : AppCompatActivity() {
         val user = auth.currentUser!!
         val empName = user.displayName!!
 
-        databaseRef.child("employees")
+        databaseRef.child("companies")
             .child(user.uid).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val empGender = snapshot.child("gender").value.toString()

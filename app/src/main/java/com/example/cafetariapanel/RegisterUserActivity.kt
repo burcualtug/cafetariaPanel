@@ -27,11 +27,13 @@ import com.theartofdev.edmodo.cropper.CropImageView
 import datamodels.IdCardModel
 import java.util.*
 import com.example.cafetariapanel.R
+import java.math.BigInteger
 
 class RegisterUserActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var databaseRef: DatabaseReference
+    private lateinit var databaseRef2: DatabaseReference
     private lateinit var storageRef: StorageReference
 
     private lateinit var employeeIDCardIV: ImageView
@@ -43,10 +45,15 @@ class RegisterUserActivity : AppCompatActivity() {
     private lateinit var mobileNumberTIL: TextInputLayout
     private lateinit var createPasswordTIL: TextInputLayout
     private lateinit var confirmPasswordTIL: TextInputLayout
+    private lateinit var useruidText: TextView
 
     private lateinit var employeeIDCardUri: Uri
     var idUploaded = false
 
+    var companyID: String = ""
+    companion object {
+        var globalVar = ""
+    }
     private lateinit var agreeCheckBox: CheckBox
     private lateinit var registerBtn: Button
 
@@ -68,8 +75,9 @@ class RegisterUserActivity : AppCompatActivity() {
         setContentView(R.layout.activity_register_user)
 
         auth = FirebaseAuth.getInstance()
-        databaseRef = FirebaseDatabase.getInstance().reference.child("employees")
+        databaseRef = FirebaseDatabase.getInstance().reference.child("companies")
         storageRef = FirebaseStorage.getInstance().reference.child("employeeIdCards")
+        databaseRef2 = FirebaseDatabase.getInstance().reference
 
         fullNameTIL = findViewById(R.id.register_full_name_til)
         emailTIL = findViewById(R.id.register_email_til)
@@ -83,6 +91,8 @@ class RegisterUserActivity : AppCompatActivity() {
         agreeCheckBox = findViewById(R.id.register_agree_check_box)
         registerBtn = findViewById(R.id.register_emp_btn)
 
+        useruidText = findViewById(R.id.useruid)
+        useruidText.text=uuidGenerator()
         agreeCheckBox.setOnClickListener {
             registerBtn.isEnabled = agreeCheckBox.isChecked
         }
@@ -91,6 +101,9 @@ class RegisterUserActivity : AppCompatActivity() {
         registerBtn.setOnClickListener { registerEmployee() }
     }
 
+    fun uuidGenerator(): String {
+        return String.format("%040d", BigInteger(UUID.randomUUID().toString().replace("-", ""), 16)).dropLast(32)
+    }
     fun chooseImageFromGallery(view: View) {
         CropImage
             .activity()
@@ -271,16 +284,33 @@ class RegisterUserActivity : AppCompatActivity() {
         val orgName = organizationTIL.editText!!.text.toString()
         val empIDNo = employeeIDTIL.editText!!.text.toString()
         val mobileNo = mobileNumberTIL.editText!!.text.toString()
+        companyID = organizationTIL.editText!!.text.toString()
+        globalVar=companyID
+//user.uid
+        val company = databaseRef2.child(companyID).child("company").child(user.uid)
+        //val employee = company.child(user.uid)
+        val matches = databaseRef2.child("matches")
+        val match = matches.child(user.uid)
 
-        val employee = databaseRef.child(user.uid)
+        //val company = databaseRef2.child(empIDNo).child("company")
+        company.child("organization").setValue(orgName)
+        company.child("emp_id").setValue(empIDNo)
+        company.child("mobile_no").setValue(mobileNo)
+        company.child("gender").setValue("none")
+        company.child("reg_id").setValue(getRegID())
+        company.child("reg_date").setValue(getRegDate())
+        company.child("emp_id_card_uri").setValue(idCardDownloadUri)
+
+        /*val employee = databaseRef.child(user.uid)
         employee.child("organization").setValue(orgName)
         employee.child("emp_id").setValue(empIDNo)
         employee.child("mobile_no").setValue(mobileNo)
         employee.child("gender").setValue("none")
         employee.child("reg_id").setValue(getRegID())
         employee.child("reg_date").setValue(getRegDate())
-        employee.child("emp_id_card_uri").setValue(idCardDownloadUri)
+        employee.child("emp_id_card_uri").setValue(idCardDownloadUri)*/
 
+        match.child("organizationID").setValue(orgName)
         sendEmailVerification(user)
     }
 

@@ -43,7 +43,7 @@ class GenderSelectionActivity : AppCompatActivity() {
     }
 
     private fun saveGenderToDatabase(uid: String) {
-        val dbRef = FirebaseDatabase.getInstance().reference.child("employees").child(uid)
+        val dbRef = FirebaseDatabase.getInstance().reference.child("companies").child(uid)
         dbRef.child("gender").setValue(this.gender)
 
         Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show()

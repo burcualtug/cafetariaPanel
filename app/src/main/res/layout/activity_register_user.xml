@@ -41,6 +41,15 @@
                 android:textSize="18sp"
                 android:fontFamily="@font/montserrat_semi_bold"
                 android:layout_gravity="center"/>
+            <TextView
+                android:id="@+id/useruid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text=""
+                android:textSize="10dp"
+                android:fontFamily="@font/montserrat_semi_bold"
+                android:layout_gravity="center"/>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/register_full_name_til"
@@ -88,7 +97,6 @@
                     android:inputType="text"
                     android:drawableStart="@drawable/ic_organization"
                     android:drawablePadding="10dp"/>
-
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/register_employee_id_til"
