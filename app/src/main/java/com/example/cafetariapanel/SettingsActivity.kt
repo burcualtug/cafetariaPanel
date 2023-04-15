@@ -5,13 +5,15 @@ import android.content.DialogInterface
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 import com.google.firebase.database.BuildConfig
-import com.example.cafetariapanel.R
 import datamodels.MenuItem
 import interfaces.MenuApi
 import interfaces.RequestType
@@ -144,6 +146,8 @@ class SettingsActivity : AppCompatActivity(), MenuApi {
         progressDialog.setTitle("Updating...")
         progressDialog.setMessage("Offline Menu is preparing for you...")
         progressDialog.show()
+        val user = FirebaseAuth.getInstance().currentUser!!
+        val databaseRef2: DatabaseReference = FirebaseDatabase.getInstance().reference
 
         FirebaseDBService().readAllMenu(this, RequestType.OFFLINE_UPDATE)
     }

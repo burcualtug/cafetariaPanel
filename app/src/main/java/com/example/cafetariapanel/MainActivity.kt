@@ -1,6 +1,7 @@
 package com.example.cafetariapanel
 
 import adapters.RecyclerFoodItemAdapter
+import android.annotation.SuppressLint
 import android.app.ActivityOptions
 import android.app.ProgressDialog
 import android.content.DialogInterface
@@ -34,7 +35,6 @@ import interfaces.MenuApi
 import interfaces.RequestType
 import services.DatabaseHandler
 import services.FirebaseDBService
-import com.example.cafetariapanel.R
 
 
 class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickListener, MenuApi {
@@ -54,12 +54,14 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
 
     private lateinit var userIcon: CircleImageView
     private lateinit var showAllSwitch: SwitchCompat
+    private lateinit var addItem: Button
 
     private lateinit var topHeaderLL: LinearLayout
     private lateinit var topSearchLL: LinearLayout
     private lateinit var searchBox: SearchView
     private lateinit var foodCategoryCV: CardView
     private lateinit var showAllLL: LinearLayout
+
 
     private var empName = ""
     private var empEmail = ""
@@ -94,6 +96,7 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
         Handler().postDelayed({ doubleBackToExit = false }, 2000)
     }
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -108,13 +111,16 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
         loadMenu()
         loadSearchTask()
 
+        addItem=findViewById(R.id.addItem)
+        addItem.setOnClickListener{
+            startActivity(Intent(this, AddItem2::class.java))
+        }
         userIcon = findViewById(R.id.menu_user_icon)
         userIcon.setOnClickListener {
             openUserProfileActivity()
         }
     }
     private fun getOrgID(){
-
         val user = FirebaseAuth.getInstance().currentUser!!
         val databaseRef: DatabaseReference = FirebaseDatabase.getInstance().reference
 
@@ -227,12 +233,12 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
     }
 
     private fun loadOnlineMenu() {
-        /*progressDialog = ProgressDialog(this)
+        progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
         progressDialog.setTitle("Loading Menu...")
         progressDialog.setMessage("For fast and smooth experience, you can download Menu for Offline.")
         progressDialog.create()
-        progressDialog.show()*/
+        progressDialog.show()
 
         FirebaseDBService().readAllMenu(this, RequestType.READ)
     }
@@ -437,6 +443,23 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
             ActivityOptions.makeSceneTransitionAnimation(this, userIcon, "userIconTransition")
         startActivity(intent, options.toBundle())
     }
+
+    /*private fun getOrgID(){
+
+        val user = FirebaseAuth.getInstance().currentUser!!
+        val databaseRef2: DatabaseReference = FirebaseDatabase.getInstance().reference
+
+        databaseRef2.child("matches").child(user.uid)
+            .addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val globalOrgID = snapshot.child("organizationID").value.toString()
+                    Log.d("GLBID",globalOrgID)
+                    registerMenu(globalOrgID)
+                }
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+    }*/
 
     private fun updateOfflineFoodMenu(offlineMenuToVisible: Boolean = false) {
         db.clearTheOfflineMenuTable() // clear the older records first
