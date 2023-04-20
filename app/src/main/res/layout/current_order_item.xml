@@ -107,6 +107,25 @@
             </TableRow>
 
         </TableLayout>
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:id="@+id/order_note_table"
+            android:stretchColumns="1">
+
+            <TableRow
+                android:layout_width="match_parent">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:text="Order Note"
+                    android:singleLine="true"
+                    android:textColor="@color/text_light_color"/>
+
+            </TableRow>
+        </TableLayout>
 
         <View
             android:layout_width="match_parent"
@@ -236,7 +255,7 @@
             android:elevation="0dp"
             app:elevation="0dp"
             android:minHeight="10dp"
-            android:text="Show QR"
+            android:text="Accept Order"
             android:textAllCaps="false"
             android:textColor="@color/white"
             app:icon="@drawable/ic_qr_code"

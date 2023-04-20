@@ -10,6 +10,10 @@
     tools:context=".MainActivity"
     android:background="#E6F8F8F8">
 
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -80,7 +84,7 @@
                 android:id="@+id/search_menu_items"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:queryHint="eg, Mango Shake, Burger"
+                android:queryHint="eg, Apple Coke, Burger"
                 android:iconifiedByDefault="false"
                 app:voiceIcon="@drawable/ic_user"/>
 
@@ -314,55 +318,7 @@
 
                             </LinearLayout>
 
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="20dp"
-                                android:orientation="vertical"
-                                android:gravity="center_horizontal"
-                                android:onClick="showTagItems"
-                                android:clickable="true"
-                                android:focusable="true">
 
-                                <ImageView
-                                    android:layout_width="@dimen/category_item_image_width"
-                                    android:layout_height="@dimen/category_item_image_height"
-                                    android:src="@drawable/soup" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="5dp"
-                                    android:text="@string/soup"
-                                    android:textSize="12sp"
-                                    android:fontFamily="@font/montserrat_semi_bold"/>
-
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="20dp"
-                                android:orientation="vertical"
-                                android:gravity="center_horizontal"
-                                android:onClick="showTagItems"
-                                android:clickable="true"
-                                android:focusable="true">
-
-                                <ImageView
-                                    android:layout_width="@dimen/category_item_image_width"
-                                    android:layout_height="@dimen/category_item_image_height"
-                                    android:src="@drawable/noodles" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="5dp"
-                                    android:text="@string/noodles"
-                                    android:textSize="12sp"
-                                    android:fontFamily="@font/montserrat_semi_bold"/>
-
-                            </LinearLayout>
 
                         </LinearLayout>
 
@@ -381,19 +337,20 @@
                 android:paddingEnd="5dp"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                <Button
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/here_s_what_i_found_for_you"
-                    android:fontFamily="@font/montserrat_semi_bold"
-                    android:textSize="12sp"/>
+                    android:id="@+id/addItem"
+                    android:text="Add Items"
+                    android:background="@drawable/rounded_rectangle"
+                    tools:ignore="MissingConstraints" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/show_all_items_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/show_all"
+                    android:layout_marginLeft="130dp"
                     android:fontFamily="@font/montserrat_regular"
                     android:scaleX="0.8"
                     android:scaleY="0.8"
@@ -406,14 +363,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/addItem"
-                    android:text="Add Items"
-                    android:layout_marginTop="90dp"
-                    android:background="@drawable/rounded_rectangle"
-                    tools:ignore="MissingConstraints" />
+
 
                 <!--All Menu Items-->
                 <LinearLayout
@@ -432,28 +382,12 @@
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/left_corner_curve"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:onClick="showBottomDialog">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="10dp"
-                        android:layout_marginVertical="15dp"
-                        android:src="@drawable/ic_arrow_upward"/>
-
-                </LinearLayout>
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
 
     </LinearLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"

@@ -1,0 +1,11 @@
+<resources>
+    <string-array name="Categories">
+        <item>Drinks</item>
+        <item>Fruits</item>
+        <item>Burger</item>
+        <item>Cake</item>
+        <item>Pizza</item>
+        <item>Snacks</item>
+        <item>Main Course</item>
+    </string-array>
+</resources>

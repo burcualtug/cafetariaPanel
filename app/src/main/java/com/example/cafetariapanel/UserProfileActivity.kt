@@ -18,7 +18,6 @@ import java.lang.Exception
 import com.example.cafetariapanel.R
 
 class UserProfileActivity : AppCompatActivity() {
-    //private val repository: UserRepository = TODO()
     private lateinit var sharedPref: SharedPreferences
 
     private val _orgIDData  = MutableLiveData<String>()
@@ -43,15 +42,7 @@ class UserProfileActivity : AppCompatActivity() {
         getOrgID()
         //loadUserProfile()
     }
-    /*init{
-        GlobalScope.launch { getLevel() }
-    }
-    suspend fun getLevel() {
-        val obj = repositories.UserRepository()
-        val user = FirebaseAuth.getInstance().currentUser!!
-        _orgIDData.value = obj.returncompanyID(user.uid)
-        Toast.makeText(this,_orgIDData.value,Toast.LENGTH_SHORT).show()
-    }*/
+
     private fun getOrgID(){
 
         val user = FirebaseAuth.getInstance().currentUser!!
@@ -88,7 +79,7 @@ class UserProfileActivity : AppCompatActivity() {
             val databaseRef: DatabaseReference = FirebaseDatabase.getInstance().reference
             //databaseRef.child("employees").child(user.uid)
 
-            databaseRef.child(globalOrgID).child("company").child(user.uid)
+            databaseRef.child(globalOrgID).child("company")//.child(user.uid)
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
 

@@ -38,11 +38,11 @@ class RecyclerFoodItemAdapter(
         val itemPriceTV: TextView = itemView.findViewById(R.id.item_price)
         val itemStarsTV: TextView = itemView.findViewById(R.id.item_stars)
         val itemShortDesc: TextView = itemView.findViewById(R.id.item_short_desc)
-        val itemQuantityTV: TextView = itemView.findViewById(R.id.item_quantity_tv)
+        /*val itemQuantityTV: TextView = itemView.findViewById(R.id.item_quantity_tv)
         val itemQuantityIncreaseIV: ImageView =
             itemView.findViewById(R.id.increase_item_quantity_iv)
         val itemQuantityDecreaseIV: ImageView =
-            itemView.findViewById(R.id.decrease_item_quantity_iv)
+            itemView.findViewById(R.id.decrease_item_quantity_iv)*/
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemListViewHolder {
@@ -62,7 +62,7 @@ class RecyclerFoodItemAdapter(
         holder.itemPriceTV.text = "$${currentItem.itemPrice}"
         holder.itemStarsTV.text = currentItem.itemStars.toString()
         holder.itemShortDesc.text = currentItem.itemShortDesc
-        holder.itemQuantityTV.text = currentItem.quantity.toString()
+        /*holder.itemQuantityTV.text = currentItem.quantity.toString()
 
         holder.itemQuantityIncreaseIV.setOnClickListener {
             val n = currentItem.quantity
@@ -77,7 +77,7 @@ class RecyclerFoodItemAdapter(
             holder.itemQuantityTV.text = (n-1).toString()
 
             listener.onMinusBtnClick(currentItem)
-        }
+        }*/
 
         holder.itemView.setOnClickListener {
             listener.onItemClick(currentItem)

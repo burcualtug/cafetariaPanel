@@ -43,6 +43,7 @@ class SettingsActivity : AppCompatActivity(), MenuApi {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
+        sharedPref = getSharedPreferences("user_profile_details", MODE_PRIVATE)
         loadItemImageLL = findViewById(R.id.settings_load_item_images_ll)
         loadItemImageTV = findViewById(R.id.settings_load_item_images_tv)
         loadItemImageLL.setOnClickListener { updateLoadItemImage() }
@@ -149,7 +150,8 @@ class SettingsActivity : AppCompatActivity(), MenuApi {
         val user = FirebaseAuth.getInstance().currentUser!!
         val databaseRef2: DatabaseReference = FirebaseDatabase.getInstance().reference
 
-        FirebaseDBService().readAllMenu(this, RequestType.OFFLINE_UPDATE)
+        val shp = sharedPref.getString("emp_org", "11")
+        FirebaseDBService().readAllMenu(this, RequestType.OFFLINE_UPDATE,shp!!)
     }
 
     override fun onFetchSuccessListener(list: ArrayList<MenuItem>, requestType: RequestType) {

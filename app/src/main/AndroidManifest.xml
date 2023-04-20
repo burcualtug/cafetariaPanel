@@ -17,6 +17,13 @@
         android:theme="@style/Theme.CafetariaPanel"
         tools:targetApi="31">
         <activity
+            android:name=".OrderDoneActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".AddItem2"
             android:exported="false">
             <meta-data

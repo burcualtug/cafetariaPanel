@@ -26,6 +26,7 @@ class RecyclerCurrentOrderAdapter(
     interface OnItemClickListener {
         fun showQRCode(orderID: String)
         fun cancelOrder(position: Int)
+        fun acceptOrder(position: Int)
     }
 
     class ItemListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -33,6 +34,7 @@ class RecyclerCurrentOrderAdapter(
         val paymentStatusTV: TextView = itemView.findViewById(R.id.current_order_item_payment_status_tv)
         val orderIDTV: TextView = itemView.findViewById(R.id.current_order_item_order_id_tv)
         val tableLayout: TableLayout = itemView.findViewById(R.id.current_order_item_table_layout)
+        val tableLayoutNote: TableLayout = itemView.findViewById(R.id.order_note_table)
         val totalItemPriceTV: TextView = itemView.findViewById(R.id.current_order_item_total_price_tv)
         val totalTaxTV: TextView = itemView.findViewById(R.id.current_order_item_total_tax_tv)
         val subTotalTV: TextView = itemView.findViewById(R.id.current_order_item_sub_total_tv)
@@ -56,14 +58,16 @@ class RecyclerCurrentOrderAdapter(
         holder.takeAwayTimeTV.text = currentItem.takeAwayTime
         holder.paymentStatusTV.text = currentItem.paymentStatus
         holder.orderIDTV.text = currentItem.orderID
-        holder.totalItemPriceTV.text = "\$%.2f".format(currentItem.totalItemPrice.toFloat())
-        holder.totalTaxTV.text = "\$%.2f".format(currentItem.tax.toFloat())
-        holder.subTotalTV.text = "\$%.2f".format(currentItem.subTotal.toFloat())
+//        holder.totalItemPriceTV.text = "\$%.2f".format(currentItem.totalItemPrice.toFloat())
+//        holder.totalTaxTV.text = "\$%.2f".format(currentItem.tax.toFloat())
+//        holder.subTotalTV.text = "\$%.2f".format(currentItem.subTotal.toFloat())
 
         addTable(currentItem, holder.tableLayout)
+        addNoteTable(currentItem,holder.tableLayoutNote)
 
         holder.showQRBtn.setOnClickListener {
-            listener.showQRCode(currentItem.orderID)
+            //listener.showQRCode(currentItem.orderID)
+            listener.acceptOrder(position)
         }
 
         holder.cancelBtn.setOnClickListener {
@@ -85,6 +89,29 @@ class RecyclerCurrentOrderAdapter(
                 )
             )
         }
+    }
+
+    private fun addNoteTable(currentOrderItem: CurrentOrderItem, table: TableLayout) {
+        val note = currentOrderItem.orderNote
+        table.addView(getNoteRow(note))
+
+    }
+
+    fun getNoteRow(orderNote:String):TableRow{
+        val tableRow = TableRow(context)
+        val tableOrderNote = TextView(context)
+
+        val typeface = ResourcesCompat.getFont(context, R.font.montserrat_semi_bold)
+        tableOrderNote.text = orderNote
+        tableOrderNote.setTextColor(Color.parseColor("#1C213F"))
+
+        tableOrderNote.typeface = typeface
+
+        tableRow.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+
+        tableRow.addView(tableOrderNote)
+
+        return tableRow
     }
 
     private fun getTableRow(itemName: String, itemQty: String): TableRow {

@@ -287,7 +287,7 @@ class RegisterUserActivity : AppCompatActivity() {
         companyID = organizationTIL.editText!!.text.toString()
         globalVar=companyID
 
-        val company = databaseRef2.child(companyID).child("company").child(user.uid)
+        val company = databaseRef2.child(companyID).child("company")//.child(user.uid)
         //val employee = company.child(user.uid)
         val matches = databaseRef2.child("matches")
         val match = matches.child(user.uid)

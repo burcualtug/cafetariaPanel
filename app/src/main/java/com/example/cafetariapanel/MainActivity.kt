@@ -33,6 +33,7 @@ import datamodels.MenuItem
 import de.hdodenhof.circleimageview.CircleImageView
 import interfaces.MenuApi
 import interfaces.RequestType
+import kotlinx.android.synthetic.main.activity_main.*
 import services.DatabaseHandler
 import services.FirebaseDBService
 
@@ -72,6 +73,7 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
 
     private lateinit var progressDialog: ProgressDialog
 
+    private lateinit var sharedPref: SharedPreferences
     override fun onBackPressed() {
         if (searchIsActive) {
             //un-hiding all the views which are above the items
@@ -101,16 +103,16 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        sharedPref = getSharedPreferences("user_profile_details", MODE_PRIVATE)
         auth = FirebaseAuth.getInstance()
         databaseRef = FirebaseDatabase.getInstance().reference
-
+        refreshPage()
         db.clearCartTable()
         getOrgID()
         //loadProfile()
         loadNavigationDrawer()
         loadMenu()
         loadSearchTask()
-
         addItem=findViewById(R.id.addItem)
         addItem.setOnClickListener{
             startActivity(Intent(this, AddItem2::class.java))
@@ -120,6 +122,19 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
             openUserProfileActivity()
         }
     }
+    fun refreshPage(){
+        swipeRefresh.setOnRefreshListener {
+            startActivity(
+                Intent(
+                    this,
+                    MainActivity::class.java
+                )
+            )
+            Toast.makeText(this,"Page refreshed!",Toast.LENGTH_SHORT).show()
+            swipeRefresh.isRefreshing=false
+        }
+    }
+
     private fun getOrgID(){
         val user = FirebaseAuth.getInstance().currentUser!!
         val databaseRef: DatabaseReference = FirebaseDatabase.getInstance().reference
@@ -240,7 +255,8 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
         progressDialog.create()
         progressDialog.show()
 
-        FirebaseDBService().readAllMenu(this, RequestType.READ)
+        val shp = sharedPref.getString("emp_org", "11")
+        FirebaseDBService().readAllMenu(this, RequestType.READ,shp!!)
     }
 
     private fun loadSearchTask() {
@@ -444,23 +460,6 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
         startActivity(intent, options.toBundle())
     }
 
-    /*private fun getOrgID(){
-
-        val user = FirebaseAuth.getInstance().currentUser!!
-        val databaseRef2: DatabaseReference = FirebaseDatabase.getInstance().reference
-
-        databaseRef2.child("matches").child(user.uid)
-            .addListenerForSingleValueEvent(object: ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val globalOrgID = snapshot.child("organizationID").value.toString()
-                    Log.d("GLBID",globalOrgID)
-                    registerMenu(globalOrgID)
-                }
-                override fun onCancelled(error: DatabaseError) {
-                }
-            })
-    }*/
-
     private fun updateOfflineFoodMenu(offlineMenuToVisible: Boolean = false) {
         db.clearTheOfflineMenuTable() // clear the older records first
 
@@ -468,7 +467,9 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
         progressDialog.setMessage("Offline Menu is preparing for you...")
         progressDialog.show()
 
-        FirebaseDBService().readAllMenu(this, RequestType.OFFLINE_UPDATE)
+        val shp = sharedPref.getString("emp_org", "11")
+
+        FirebaseDBService().readAllMenu(this, RequestType.OFFLINE_UPDATE,shp!!)
     }
 
     override fun onFetchSuccessListener(list: ArrayList<MenuItem>, requestType: RequestType) {
@@ -487,7 +488,6 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
             Toast.makeText(applicationContext, "Offline Menu Updated", Toast.LENGTH_LONG).show()
             loadOfflineMenu()
         }
-
         progressDialog.dismiss()
     }
 

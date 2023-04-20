@@ -265,14 +265,14 @@ class PaymentActivity : AppCompatActivity(), RecyclerSavedCardsAdapter.OnItemCli
             //netBankingRB.isChecked -> paymentMethod = "Paid: Net Banking"
         }
 
-        /*val intent = Intent(this, OrderDoneActivity::class.java)
+        val intent = Intent(this, OrderDoneActivity::class.java)
         intent.putExtra("totalItemPrice", totalItemPrice)
         intent.putExtra("totalTaxPrice", totalTaxPrice)
         intent.putExtra("subTotalPrice", subTotalPrice)
         intent.putExtra("takeAwayTime", takeAwayTime)
         intent.putExtra("paymentMethod", paymentMethod)
 
-        startActivity(intent)*/
+        startActivity(intent)
         finish()
     }
 

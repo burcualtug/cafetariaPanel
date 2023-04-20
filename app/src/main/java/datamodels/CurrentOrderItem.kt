@@ -9,5 +9,6 @@ data class CurrentOrderItem(
     var totalItemPrice: String = "TOTAL_ITEM_PRICE",
     var tax: String = "TAX",
     var subTotal: String = "SUB_TOTAL",
-    var id: Int = 0
+    var id: String = "0",
+    var orderNote:String = ""
 )

@@ -2,6 +2,7 @@ package com.example.cafetariapanel
 
 import adapters.RecyclerOrderHistoryAdapter
 import android.content.DialogInterface
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -11,6 +12,11 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
+import datamodels.CurrentOrderItem
 import datamodels.OrderHistoryItem
 import services.DatabaseHandler
 
@@ -21,6 +27,8 @@ class OrdersHistoryActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerAdapter: RecyclerOrderHistoryAdapter
 
+    private lateinit var databaseRef: DatabaseReference
+    private lateinit var sharedPref: SharedPreferences
     private lateinit var deleteRecordsIV : ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +42,7 @@ class OrdersHistoryActivity : AppCompatActivity() {
 
         deleteRecordsIV = findViewById(R.id.order_history_delete_records_iv)
         deleteRecordsIV.setOnClickListener { deleteOrderHistoryRecords() }
-
+        sharedPref = getSharedPreferences("user_profile_details", MODE_PRIVATE)
         loadOrderHistoryListFromDatabase()
     }
 
@@ -42,10 +50,38 @@ class OrdersHistoryActivity : AppCompatActivity() {
         val db = DatabaseHandler(this)
         val data = db.readOrderData()
 
+        //val shp = sharedPref.getString("emp_org", "11")
+        //val ordersDbRef = databaseRef.child(shp!!).child("orders")
+
         if(data.size == 0) {
             deleteRecordsIV.visibility = ViewGroup.INVISIBLE
             return
         }
+        var status: String=""
+        /*findViewById<LinearLayout>(R.id.order_history_empty_indicator_ll).visibility = ViewGroup.GONE
+        ordersDbRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (snap in snapshot.children) {
+
+                    if(snap.child("situation").value.toString() == "1")  status = "Order Successful"
+                    if(snap.child("situation").value.toString() == "0")  status = "Order Cancelled"
+                    val currentOrderItem = OrderHistoryItem()
+                    currentOrderItem.orderId = snap.child("order_id").value.toString()
+                    currentOrderItem.date = snap.child("takeAwayTime").value.toString()
+                    currentOrderItem.orderStatus=status
+                    currentOrderItem.orderPayment = snap.child("paymentMethod").value.toString()
+                    currentOrderItem.price = snap.child("takeAwayTime").value.toString()
+
+                    orderHistoryList.add(currentOrderItem)
+                    orderHistoryList.reverse()
+                    recyclerAdapter.notifyItemRangeInserted(0, 2)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // HANDLE ERROR
+            }
+        })*/
 
         findViewById<LinearLayout>(R.id.order_history_empty_indicator_ll).visibility = ViewGroup.GONE
         for(i in 0 until data.size) {
@@ -59,6 +95,8 @@ class OrdersHistoryActivity : AppCompatActivity() {
             orderHistoryList.reverse()
             recyclerAdapter.notifyItemRangeInserted(0, data.size)
         }
+
+
     }
 
     private fun deleteOrderHistoryRecords() {

@@ -73,9 +73,9 @@ class ContactUsActivity : AppCompatActivity() {
             val intent = Intent(Intent.ACTION_SEND)
             val recipient = arrayOf(canteenMail) //mail address of canteen
             intent.putExtra(Intent.EXTRA_EMAIL, recipient)
-            intent.putExtra(Intent.EXTRA_SUBJECT,"Contact: Cafy")
+            intent.putExtra(Intent.EXTRA_SUBJECT,"Contact: LoCaf")
             intent.putExtra(Intent.EXTRA_TEXT,"What do you want to tell us?")
-            intent.putExtra(Intent.EXTRA_CC,"mailcc@gmail.com")
+            intent.putExtra(Intent.EXTRA_CC,"burcu.altug1105@gmail.com")
             intent.type = "text/html"
             intent.setPackage("com.google.android.gm")
             startActivity(Intent.createChooser(intent, "Send mail"))

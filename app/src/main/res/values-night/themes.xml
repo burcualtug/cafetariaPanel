@@ -13,4 +13,14 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <color name="status_bar">#fff</color>
+
+    <style name="TimeDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/purple_theme_color</item>
+        <item name="colorControlNormal">@color/purple_theme_color</item>
+        <item name="buttonBarNegativeButtonStyle">@color/purple_theme_color</item>
+        <item name="buttonBarPositiveButtonStyle">@color/purple_theme_color</item>
+
+    </style>
 </resources>

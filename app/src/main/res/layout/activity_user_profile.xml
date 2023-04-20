@@ -119,7 +119,7 @@
                                 android:layout_height="30dp"
                                 android:layout_marginEnd="10dp"
                                 android:src="@drawable/ic_reg_id"
-                                android:contentDescription="@string/cafy_reg_id"/>
+                                android:contentDescription="@string/LoCaf_reg_id"/>
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
@@ -128,7 +128,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="@string/cafy_reg_id"
+                                    android:text="@string/LoCaf_reg_id"
                                     android:fontFamily="@font/montserrat_bold"
                                     android:textSize="12sp"
                                     android:textColor="@color/purple_theme_color"/>
@@ -136,7 +136,7 @@
                                     android:id="@+id/profile_reg_id_tv"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="@string/cafy_reg_id"
+                                    android:text="@string/LoCaf_reg_id"
                                     android:textSize="15sp"
                                     android:textColor="@color/text_light_color"/>
                             </LinearLayout>

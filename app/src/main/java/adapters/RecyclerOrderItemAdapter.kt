@@ -43,9 +43,9 @@ class RecyclerOrderItemAdapter(var context: Context,
         val itemPriceTV: TextView = itemView.findViewById(R.id.item_price)
         val itemStarsTV: TextView = itemView.findViewById(R.id.item_stars)
         val itemShortDesc: TextView = itemView.findViewById(R.id.item_short_desc)
-        val itemQuantityTV: TextView = itemView.findViewById(R.id.item_quantity_tv)
+        /*val itemQuantityTV: TextView = itemView.findViewById(R.id.item_quantity_tv)
         val itemQuantityIncreaseIV: ImageView = itemView.findViewById(R.id.increase_item_quantity_iv)
-        val itemQuantityDecreaseIV: ImageView = itemView.findViewById(R.id.decrease_item_quantity_iv)
+        val itemQuantityDecreaseIV: ImageView = itemView.findViewById(R.id.decrease_item_quantity_iv)*/
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemListViewHolder {
@@ -66,7 +66,7 @@ class RecyclerOrderItemAdapter(var context: Context,
         holder.itemStarsTV.text = currentItem.itemStars.toString()
         holder.itemShortDesc.text = currentItem.itemShortDesc
 
-        holder.itemQuantityTV.text = currentItem.quantity.toString()
+        //holder.itemQuantityTV.text = currentItem.quantity.toString()
 
         holder.removeOrderedItem.setOnClickListener {
             totalItems -= currentItem.quantity
@@ -75,7 +75,7 @@ class RecyclerOrderItemAdapter(var context: Context,
             updateOrderDetails()
         }
 
-        holder.itemQuantityIncreaseIV.setOnClickListener {
+        /*holder.itemQuantityIncreaseIV.setOnClickListener {
             val n = currentItem.quantity
             holder.itemQuantityTV.text = (n+1).toString()
             currentItem.quantity++
@@ -102,7 +102,7 @@ class RecyclerOrderItemAdapter(var context: Context,
                 currentItem.quantity--
                 updateOrderDetails()
             }
-        }
+        }*/
     }
 
     private fun removeItem(position: Int) {
