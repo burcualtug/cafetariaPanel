@@ -146,6 +146,7 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
 
                     Log.d("GLBID",globalOrgID)
                     loadProfile(globalOrgID)
+                    loadOnlineMenu(globalOrgID)
                 }
 
                 override fun onCancelled(error: DatabaseError) {}
@@ -201,7 +202,7 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
         }
 
         when (sharedPref.getInt("menuMode", 0)) {
-            0 -> loadOnlineMenu()
+            0 -> getOrgID()//loadOnlineMenu()
             1 -> { // Offline
                 val data = db.readOfflineMenuData()
 
@@ -217,7 +218,7 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
                         .setNegativeButton(
                             "No, Continue to Online Mode",
                             DialogInterface.OnClickListener { dialogInterface, _ ->
-                                loadOnlineMenu()
+                                getOrgID()//loadOnlineMenu()
                                 dialogInterface.dismiss()
                             })
                         .setCancelable(false)
@@ -247,7 +248,7 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
         recyclerFoodAdapter.notifyItemRangeInserted(0, allItems.size)
     }
 
-    private fun loadOnlineMenu() {
+    private fun loadOnlineMenu(orgID: String) {
         progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
         progressDialog.setTitle("Loading Menu...")
@@ -256,7 +257,7 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
         progressDialog.show()
 
         val shp = sharedPref.getString("emp_org", "11")
-        FirebaseDBService().readAllMenu(this, RequestType.READ,shp!!)
+        FirebaseDBService().readAllMenu(this, RequestType.READ,orgID)
     }
 
     private fun loadSearchTask() {

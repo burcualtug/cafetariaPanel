@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.view.ViewGroup
@@ -67,6 +68,26 @@ class LoginUserActivity : AppCompatActivity() {
         }
     }
 
+    private fun getOrgID(){
+
+        val user = FirebaseAuth.getInstance().currentUser!!
+        val databaseRef: DatabaseReference = FirebaseDatabase.getInstance().reference
+
+        databaseRef.child("matches").child(user.uid)
+            .addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val globalOrgID = snapshot.child("organizationID").value.toString()
+
+                    Log.d("GLBID",globalOrgID)
+                    checkGenderSavedOrNot(globalOrgID)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
+    }
+
     private fun validateEmail(): Boolean {
         val email = emailTIL.editText!!.text.toString().trim()
         if(email.isEmpty()) {
@@ -108,7 +129,7 @@ class LoginUserActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if(task.isSuccessful) {
                     if(auth.currentUser!!.isEmailVerified) {
-                        checkGenderSavedOrNot()
+                        getOrgID()//checkGenderSavedOrNot()
                     } else {
                         findViewById<ProgressBar>(R.id.login_progress_bar).visibility = ViewGroup.INVISIBLE
                         AlertDialog.Builder(this)
@@ -139,12 +160,31 @@ class LoginUserActivity : AppCompatActivity() {
 
     }
 
-    private fun checkGenderSavedOrNot() {
+    private fun checkGenderSavedOrNot(globalOrgID:String) {
         val user = auth.currentUser!!
         val empName = user.displayName!!
         val shp = sharedPref.getString("emp_org","11")
 
-        databaseRef.child(shp!!).child("company").child(user.uid)
+        databaseRef.child(globalOrgID).child("company").child(user.uid)
+            .get().addOnSuccessListener {
+                if(it.exists()){
+                    val empGender = it.child("gender").value.toString()
+
+                    if(empGender == "none") {
+                        val intent = Intent(this@LoginUserActivity, GenderSelectionActivity::class.java)
+                        intent.putExtra("name", empName)
+                        intent.putExtra("uid", user.uid)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        startActivity(Intent(this@LoginUserActivity, MainActivity::class.java))
+                        finish()
+                        Toast.makeText(this@LoginUserActivity, "Welcome to Locaf", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+        /*databaseRef.child(shp!!).child("company").child(user.uid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val empGender = snapshot.child("gender").value.toString()
@@ -161,7 +201,7 @@ class LoginUserActivity : AppCompatActivity() {
                     }
                 }
                 override fun onCancelled(error: DatabaseError) {}
-            })
+            }) */
     }
 
     fun openRegisterActivity(view: View) {
