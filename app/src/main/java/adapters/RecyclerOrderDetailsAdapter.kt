@@ -1,0 +1,4 @@
+package adapters
+
+class RecyclerOrderDetailsAdapter {
+}

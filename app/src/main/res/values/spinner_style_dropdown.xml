@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="CustomSpinnerStyle" parent="Widget.AppCompat.Spinner">
+        <item name="android:background">@drawable/spinner_style</item> <!-- Spinner arka planı -->
+        <item name="android:padding">8dp</item> <!-- Spinner içerik padding'i -->
+        <item name="android:popupBackground">@drawable/spinner_style</item> <!-- Dropdown menü arka planı -->
+        <item name="android:dropDownVerticalOffset">8dp</item> <!-- Dropdown menü dikey ofset -->
+        <item name="android:dropDownHorizontalOffset">8dp</item> <!-- Dropdown menü yatay ofset -->
+        <item name="android:dropDownWidth">200dp</item> <!-- Dropdown menü genişliği -->
+        <item name="android:gravity">center_vertical</item> <!-- İçerik hizalama -->
+        <item name="android:spinnerDropDownItemStyle">@style/CustomSpinnerDropDownItemStyle</item> <!-- Dropdown menü öğeleri stil -->
+    </style>
+
+    <style name="CustomSpinnerDropDownItemStyle" parent="Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:textColor">@color/purple_200</item> <!-- Dropdown menü öğe metin rengi -->
+        <item name="android:padding">8dp</item> <!-- Dropdown menü öğe içerik padding'i -->
+    </style>
+
+
+
+</resources>

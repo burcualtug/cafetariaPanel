@@ -16,6 +16,7 @@
         android:layout_height="match_parent"
         android:scrollbars="none">
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,15 +43,34 @@
                 android:fontFamily="@font/montserrat_semi_bold"
                 android:layout_gravity="center"/>
             <TextView
-                android:id="@+id/useruid"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:text="Here's your organization ID"
+                android:layout_gravity="center"/>
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:text=""
-                android:textSize="10dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/chat_box_left">
+            <TextView
+                android:id="@+id/useruid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="orgID"
+                android:textSize="20dp"
                 android:fontFamily="@font/montserrat_semi_bold"
-                android:layout_gravity="center"/>
-
+                />
+                <Button
+                    android:id="@+id/btCopyText"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="12dp"
+                    android:background="@drawable/ic_baseline_content_copy_24"
+                    />
+        </LinearLayout>
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/register_full_name_til"
                 android:layout_width="match_parent"
@@ -93,7 +113,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/company_organization"
+                    android:hint="@string/employee_id"
                     android:inputType="text"
                     android:drawableStart="@drawable/ic_organization"
                     android:drawablePadding="10dp"/>
@@ -102,13 +122,13 @@
                 android:id="@+id/register_employee_id_til"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="@string/company_organization"
                 app:errorEnabled="true"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/employee_id"
                     android:inputType="text"
                     android:drawableStart="@drawable/ic_employee_id"
                     android:drawablePadding="10dp"/>

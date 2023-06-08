@@ -1,10 +1,13 @@
 package com.example.cafetariapanel
 
 import adapters.RecyclerCurrentOrderAdapter
+import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -16,12 +19,24 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cafetariapanel.databinding.CurrentOrderItemBinding
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.gson.Gson
 import datamodels.CurrentOrderItem
 import datamodels.MenuItem
+import datamodels.NotificationData
+import datamodels.PushNotification
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.current_order_item.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import services.DatabaseHandler
+import services.FirebaseService
+import services.RetrofitInstance
 
 
 class MyCurrentOrdersActivity : AppCompatActivity(), RecyclerCurrentOrderAdapter.OnItemClickListener {
@@ -47,7 +62,22 @@ class MyCurrentOrdersActivity : AppCompatActivity(), RecyclerCurrentOrderAdapter
         recyclerView.adapter = recyclerAdapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        refreshPage()
+
         loadCurrentOrdersFromDatabase()
+    }
+
+    fun refreshPage(){
+        swipeRefresh.setOnRefreshListener {
+            startActivity(
+                Intent(
+                    this,
+                    MainActivity::class.java
+                )
+            )
+            Toast.makeText(this,"Page refreshed!",Toast.LENGTH_SHORT).show()
+            swipeRefresh.isRefreshing=false
+        }
     }
 
     private fun loadCurrentOrdersFromDatabase() {
@@ -64,7 +94,37 @@ class MyCurrentOrdersActivity : AppCompatActivity(), RecyclerCurrentOrderAdapter
 
         var status:String=""
         findViewById<LinearLayout>(R.id.current_order_empty_indicator_ll).visibility = ViewGroup.GONE
+
+        //Log.d("snap1","snap1.toString()")
         ordersDbRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for(snap1 in snapshot.children){
+                    for(snap in snap1.children){
+                        val currentOrderItem =  CurrentOrderItem()
+                        currentOrderItem.userUID = snap.child("userUID").value.toString()
+                        currentOrderItem.orderID = snap.child("order_id").value.toString()
+                        currentOrderItem.takeAwayTime = snap.child("takeAwayTime").value.toString()
+                        currentOrderItem.paymentStatus = snap.child("paymentMethod").value.toString()
+                        currentOrderItem.orderItemNames = snap.child("itemNames").value.toString()
+                        currentOrderItem.orderItemQuantities = snap.child("itemQty").value.toString()
+                        currentOrderItem.totalItemPrice = snap.child("totalItemPrice").value.toString()
+                        currentOrderItem.tax = snap.child("totalTaxPrice").value.toString()
+                        currentOrderItem.subTotal = snap.child("subTotalPrice").value.toString()
+                        currentOrderItem.orderNote = snap.child("orderNote").value.toString()
+                        currentOrderItem.situation = snap.child("situation").value.toString()
+
+                        currentOrderList.add(currentOrderItem)
+                        currentOrderList.reverse()
+                        recyclerAdapter.notifyItemRangeInserted(0, 2)
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+        /*ordersDbRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (snap in snapshot.children) {
                     val currentOrderItem =  CurrentOrderItem()
@@ -73,9 +133,9 @@ class MyCurrentOrdersActivity : AppCompatActivity(), RecyclerCurrentOrderAdapter
                     currentOrderItem.paymentStatus = snap.child("paymentMethod").value.toString()
                     currentOrderItem.orderItemNames = snap.child("itemNames").value.toString()
                     currentOrderItem.orderItemQuantities = snap.child("itemQty").value.toString()
-                    currentOrderItem.totalItemPrice = snap.child("takeAwayTime").value.toString()
-                    currentOrderItem.tax = snap.child("takeAwayTime").value.toString()
-                    currentOrderItem.subTotal = snap.child("takeAwayTime").value.toString()
+                    currentOrderItem.totalItemPrice = snap.child("totalItemPrice").value.toString()
+                    currentOrderItem.tax = snap.child("totalTaxPrice").value.toString()
+                    currentOrderItem.subTotal = snap.child("subTotalPrice").value.toString()
                     currentOrderItem.orderNote = snap.child("orderNote").value.toString()
 
                     currentOrderList.add(currentOrderItem)
@@ -87,7 +147,7 @@ class MyCurrentOrdersActivity : AppCompatActivity(), RecyclerCurrentOrderAdapter
             override fun onCancelled(error: DatabaseError) {
                 // HANDLE ERROR
             }
-        })
+        })*/
         /*for(i in 0 until data.size) {
             val currentOrderItem =  CurrentOrderItem()
             currentOrderItem.orderID = data[i].orderID
@@ -114,13 +174,39 @@ class MyCurrentOrdersActivity : AppCompatActivity(), RecyclerCurrentOrderAdapter
     }
 
     override fun showQRCode(orderID: String) {
-        //User have to just show the QR Code, and canteen staff have to scan, so user don't have to wait more
         val bundle = Bundle()
         bundle.putString("orderID", orderID)
 
         val dialog = QRCodeFragment()
         dialog.arguments = bundle
         dialog.show(supportFragmentManager, "QR Code Generator")
+    }
+
+    fun getUserID(){
+        val user = FirebaseAuth.getInstance().currentUser!!
+        val databaseRef: DatabaseReference = FirebaseDatabase.getInstance().reference
+        //val orderID = currentOrderList[position].
+
+        databaseRef.child("matches").child(user.uid)
+            .addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val globalOrgID = snapshot.child("organizationID").value.toString()
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
+    }
+
+    override fun orderDetails(position: Int){
+
+        val intent = Intent(this, OrderDetailsActivity::class.java)
+        val userUID=currentOrderList[position].userUID
+        intent.putExtra("userUID", currentOrderList[position].userUID)
+        //intent.putExtra("orderID", currentOrderList[position].orderID)
+        //intent.putExtra("paymentMethod")
+        startActivity(intent)
     }
 
     override fun acceptOrder(position:Int){
@@ -138,7 +224,29 @@ class MyCurrentOrdersActivity : AppCompatActivity(), RecyclerCurrentOrderAdapter
 
                 val shp = sharedPref.getString("emp_org", "11")
                 val orderIDdb=currentOrderList[position].orderID
-                databaseRef.child(shp!!).child("orders").child(orderIDdb).child("situation").setValue("1")
+                val orderStRef = databaseRef.child(shp!!).child("orders") //.child(orderIDdb).child("situation").setValue("1")
+
+                orderStRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        for (snap1 in snapshot.children) {
+                            for(snap in snap1.children){
+                                Log.d("TAG","userUID")
+                                if(snap.child("order_id").value.toString() == orderIDdb){
+                                    val userUID = snap.child("userUID").value.toString()
+                                    Log.d("TAGAMK","ACCEPTEDAMK")
+                                    snap.ref.child("situation").setValue("1")
+                                    //Toast.makeText(applicationContext,"ACCEPTED AQ",Toast.LENGTH_SHORT).show()
+                                    //orderStRef.child(userUID).child("situation").setValue("1")
+                                }
+                            }
+
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        // HANDLE ERROR
+                    }
+                })
 
                 if(currentOrderList.isEmpty()) {
                     findViewById<LinearLayout>(R.id.current_order_empty_indicator_ll).visibility = ViewGroup.VISIBLE
@@ -154,6 +262,29 @@ class MyCurrentOrdersActivity : AppCompatActivity(), RecyclerCurrentOrderAdapter
     }
 
 
+    override fun contactOrder(position: Int){
+
+        val userUID=currentOrderList[position].userUID
+        val orderID = currentOrderList[position].orderID
+
+       // Toast.makeText(this,userUID,Toast.LENGTH_SHORT).show()
+        val intent = Intent(this, ChatActivity::class.java)
+        intent.putExtra("userUID", userUID)
+        intent.putExtra("orderID",orderID)
+        startActivity(intent)
+
+        /*startActivity(
+            Intent(
+                this,
+                ChatActivity::class.java
+            )
+        )*/
+    }
+
+    override fun profileInfos(position: Int){
+        currentOrderList[position].userUID
+    }
+
     override fun cancelOrder(position: Int) {
         AlertDialog.Builder(this)
             .setTitle("Order Cancellation")
@@ -163,8 +294,10 @@ class MyCurrentOrdersActivity : AppCompatActivity(), RecyclerCurrentOrderAdapter
 
                 val shp = sharedPref.getString("emp_org", "11")
                 val orderIDdb=currentOrderList[position].orderID
-                databaseRef.child(shp!!).child("orders").child(orderIDdb).removeValue()
+                val orderUserUID = currentOrderList[position].userUID
+                databaseRef.child(shp!!).child("orders").child(orderUserUID).child(orderIDdb).removeValue()
 
+                pushCancelOrderNotification(position)
                 currentOrderList.removeAt(position)
                 recyclerAdapter.notifyItemRemoved(position)
                 recyclerAdapter.notifyItemRangeChanged(position, currentOrderList.size)
@@ -181,6 +314,48 @@ class MyCurrentOrdersActivity : AppCompatActivity(), RecyclerCurrentOrderAdapter
             })
             .create().show()
     }
+
+    fun pushCancelOrderNotification(position: Int){
+        val orgID = sharedPref.getString("emp_org", "11")
+        FirebaseService.sharedPref2 = getSharedPreferences("sharedPref2", Context.MODE_PRIVATE)
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener{ task ->
+            if(!task.isSuccessful){
+                return@OnCompleteListener
+            }
+            val token = task.result
+            Log.d("FCMTOKEN",token)
+
+            FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
+
+            val orderID = currentOrderList[position].orderID
+
+            databaseRef.child(orgID!!).child("tokens").child(currentOrderList[position].userUID)
+                .get().addOnSuccessListener {
+                    if(it.exists()){
+                        val orgToken = it.child("token").value.toString()
+                        sendNotification(
+                            PushNotification(
+                                NotificationData("Your order cancelled!", "Order ID: $orderID"),
+                                orgToken)
+                        )
+                    }
+                }
+        })
+    }
+
+    private fun sendNotification(notification: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val response = RetrofitInstance.api.postNotification(notification)
+            if(response.isSuccessful) {
+                Log.d("TAG", "Response: ${Gson().toJson(response)}")
+            } else {
+                Log.e("TAG", response.errorBody().toString())
+            }
+        } catch(e: Exception) {
+            Log.e("TAG", e.toString())
+        }
+    }
+
 
     fun goBack(view: View) {onBackPressed()}
 }

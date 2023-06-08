@@ -423,12 +423,13 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
     }
 
     private fun shareApp() {
-        val message =
+        //startActivity( Intent(this,NotificationActivity::class.java))
+        /*val message =
             "Try out this awesome App on Google Play!\nhttps://play.google.com/store/apps/details?id=$packageName"
         val intent = Intent(Intent.ACTION_SEND)
         intent.putExtra(Intent.EXTRA_TEXT, message)
         intent.type = "text/plain"
-        startActivity(Intent.createChooser(intent, "Share To"))
+        startActivity(Intent.createChooser(intent, "Share To"))*/
     }
 
     fun showBottomDialog(view: View) {
@@ -529,6 +530,33 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
         } else {
             db.insertCartItem(cartItem) // Update
         }
+    }
+
+    override fun deleteItem(item: MenuItem) {
+        AlertDialog.Builder(this)
+        .setTitle("Menu Item Deleting")
+        .setMessage("Are you sure you want to delete this item?")
+        .setPositiveButton("Yes, Delete Item", DialogInterface.OnClickListener { dialogInterface, _ ->
+            //val result = DatabaseHandler(this).deleteCurrentOrderRecord(item.itemID)
+
+            val shp = sharedPref.getString("emp_org", "11")
+            databaseRef.child(shp!!).child("menu").child(item.itemID).removeValue()
+
+            //currentOrderList.removeAt(position)
+            //recyclerFoodAdapter.notifyItemRemoved(item)
+            //recyclerFoodAdapter.notifyItemRangeChanged(item, currentOrderList.size)
+            Toast.makeText(this, "Item Deleted", Toast.LENGTH_SHORT).show()
+
+            /*if(currentOrderList.isEmpty()) {
+                findViewById<LinearLayout>(R.id.current_order_empty_indicator_ll).visibility = ViewGroup.VISIBLE
+            }
+*/
+            dialogInterface.dismiss()
+        })
+        .setNegativeButton("No", DialogInterface.OnClickListener { dialogInterface, _ ->
+            dialogInterface.dismiss()
+        })
+        .create().show()
     }
 
 }

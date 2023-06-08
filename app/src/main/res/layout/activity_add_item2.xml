@@ -4,14 +4,56 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F7F7F7"
     tools:context=".AddItem2">
+    <ImageView
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="50dp"
+        android:src="@drawable/circle"
+        app:tint="#9797A2EA" />
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="100dp"
+        android:src="@drawable/circle"
+        app:tint="#838FD5" />
+
+    <!--Bottom Right Corner-->
+    <ImageView
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="50dp"
+        android:src="@drawable/circle"
+        app:tint="#9797A2EA" />
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="60dp"
+        android:src="@drawable/circle"
+        app:tint="#838FD5" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="15dp"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        tools:ignore="MissingConstraints">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -40,12 +82,24 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
-        <Spinner
-            android:id="@+id/category_spinner"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="center">
+
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:background="@drawable/rounded_rectangle"
-            android:layout_height="40dp" />
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <Spinner
+                android:id="@+id/category_spinner"
+                android:layout_width="match_parent"
+                android:background="@drawable/spinner_style"
+                style="@style/CustomSpinnerStyle"
+                android:layout_height="60dp"
+                android:layout_marginBottom="8dp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/item_name"
@@ -83,8 +137,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Item Price"
-                android:inputType="number"/>
+                android:inputType="numberDecimal"/>
         </com.google.android.material.textfield.TextInputLayout>
+        <ImageView
+            android:id="@+id/item_iv"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="250dp"
+            android:scaleType="fitStart"
+            android:layout_gravity="center"
+            android:contentDescription="Item Image"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -92,14 +154,6 @@
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:onClick="chooseImage"/>
-
-        <ImageView
-            android:id="@+id/item_iv"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="250dp"
-            android:scaleType="fitStart"
-            android:contentDescription="@string/your_id_card"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

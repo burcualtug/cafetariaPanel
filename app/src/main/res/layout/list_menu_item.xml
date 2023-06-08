@@ -101,30 +101,10 @@
                     android:elevation="0dp"
                     app:cardCornerRadius="5dp">
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:background="@color/purple_theme_color"
-                        android:orientation="horizontal"
-                        android:paddingHorizontal="5dp">
 
-                        <TextView
-                            android:id="@+id/item_stars"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="5dp"
-                            android:text="4.2"
-                            android:textColor="@color/white"/>
-
-                        <ImageView
-                            android:layout_width="12dp"
-                            android:layout_height="12dp"
-                            android:src="@drawable/ic_star"/>
-
-                    </LinearLayout>
 
                 </androidx.cardview.widget.CardView>
+
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="wrap_content"
@@ -136,6 +116,23 @@
                     android:elevation="0dp"
                     app:cardElevation="0dp"
                     app:cardBackgroundColor="#F5F5F5">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:id="@+id/delete_item"
+                            android:layout_width="40dp"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="2dp"
+                            android:src="@drawable/ic_delete_outline"
+                            app:tint="@color/purple_theme_color"
+                            android:background="#E8E8E8"/>
+
+                    </LinearLayout>
 
                 </androidx.cardview.widget.CardView>
 

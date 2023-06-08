@@ -3,6 +3,7 @@ package com.example.cafetariapanel
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -26,6 +27,7 @@ class LoginUserActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var databaseRef: DatabaseReference
+    private lateinit var sharedPref: SharedPreferences
 
     private lateinit var emailTIL: TextInputLayout
     private lateinit var passwordTIL: TextInputLayout
@@ -51,6 +53,7 @@ class LoginUserActivity : AppCompatActivity() {
         emailTIL = findViewById(R.id.login_email_til)
         passwordTIL = findViewById(R.id.login_password_til)
 
+        sharedPref = getSharedPreferences("user_profile_details", MODE_PRIVATE)
         findViewById<TextView>(R.id.login_forgot_password_tv).setOnClickListener {userForgotPassword()}
     }
 
@@ -139,9 +142,10 @@ class LoginUserActivity : AppCompatActivity() {
     private fun checkGenderSavedOrNot() {
         val user = auth.currentUser!!
         val empName = user.displayName!!
+        val shp = sharedPref.getString("emp_org","11")
 
-        databaseRef.child("companies")
-            .child(user.uid).addListenerForSingleValueEvent(object : ValueEventListener {
+        databaseRef.child(shp!!).child("company").child(user.uid)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val empGender = snapshot.child("gender").value.toString()
                     if(empGender == "none") {
@@ -153,7 +157,7 @@ class LoginUserActivity : AppCompatActivity() {
                     } else {
                         startActivity(Intent(this@LoginUserActivity, MainActivity::class.java))
                         finish()
-                        Toast.makeText(this@LoginUserActivity, "Welcome to Cafy", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@LoginUserActivity, "Welcome to Locaf", Toast.LENGTH_SHORT).show()
                     }
                 }
                 override fun onCancelled(error: DatabaseError) {}

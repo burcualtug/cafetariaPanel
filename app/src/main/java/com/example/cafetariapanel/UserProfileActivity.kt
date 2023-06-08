@@ -79,7 +79,7 @@ class UserProfileActivity : AppCompatActivity() {
             val databaseRef: DatabaseReference = FirebaseDatabase.getInstance().reference
             //databaseRef.child("employees").child(user.uid)
 
-            databaseRef.child(globalOrgID).child("company")//.child(user.uid)
+            databaseRef.child(globalOrgID).child("company").child(user.uid)
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
 

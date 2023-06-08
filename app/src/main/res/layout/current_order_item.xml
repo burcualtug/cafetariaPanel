@@ -103,29 +103,18 @@
                     android:text="Qty"
                     android:textAlignment="textEnd"
                     android:textColor="@color/text_light_color"/>
-
             </TableRow>
 
         </TableLayout>
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
-            android:id="@+id/order_note_table"
-            android:stretchColumns="1">
-
-            <TableRow
-                android:layout_width="match_parent">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:text="Order Note"
-                    android:singleLine="true"
-                    android:textColor="@color/text_light_color"/>
-
-            </TableRow>
-        </TableLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Order Note"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/orderNoteTV"/>
 
         <View
             android:layout_width="match_parent"
@@ -168,7 +157,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tax"
+                android:text="Delivery"
                 android:textSize="15sp"
                 android:textColor="@color/text_dark_color"
                 android:fontFamily="@font/montserrat_semi_bold"/>
@@ -261,6 +250,25 @@
             app:icon="@drawable/ic_qr_code"
             app:iconTint="@color/white"
             app:iconSize="20dp"
+            app:iconPadding="0dp"
+            android:gravity="center"
+            />
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/current_order_item_chat_btn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:elevation="0dp"
+            app:elevation="0dp"
+            android:minHeight="10dp"
+            android:backgroundTint="#62EA0E"
+            android:text="Contact"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            app:icon="@drawable/ic_baseline_message_24"
+            app:iconTint="@color/white"
+            app:iconSize="15dp"
             app:iconPadding="0dp"
             android:gravity="center"
             />

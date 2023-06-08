@@ -5,6 +5,7 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="light_blue">#E3EDF1</color>
 
     <color name="purple_theme_color">#6173DF</color>
     <color name="text_dark_color">#1C213F</color>

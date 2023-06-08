@@ -1,6 +1,7 @@
 package datamodels
 
 data class CurrentOrderItem(
+    var userUID: String="USER_UID",
     var orderID: String = "ORDER_ID",
     var takeAwayTime: String = "TAKE_AWAY_TIME",
     var paymentStatus: String = "PAYMENT_STATUS",
@@ -10,5 +11,6 @@ data class CurrentOrderItem(
     var tax: String = "TAX",
     var subTotal: String = "SUB_TOTAL",
     var id: String = "0",
-    var orderNote:String = ""
+    var orderNote:String = "",
+    var situation: String = ""
 )

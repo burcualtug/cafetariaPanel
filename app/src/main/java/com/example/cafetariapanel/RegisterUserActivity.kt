@@ -2,12 +2,12 @@ package com.example.cafetariapanel
 
 
 import android.app.ProgressDialog
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore
+import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.view.ViewGroup
@@ -27,13 +27,21 @@ import com.theartofdev.edmodo.cropper.CropImageView
 import datamodels.IdCardModel
 import java.util.*
 import com.example.cafetariapanel.R
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.android.synthetic.main.activity_notification.*
+import services.FirebaseService
+//import services.FirebaseService
 import java.math.BigInteger
+
+const val TOPIC2 = "/topics/myTopic2"
 
 class RegisterUserActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var databaseRef: DatabaseReference
     private lateinit var databaseRef2: DatabaseReference
+    private lateinit var databaseRefToken: DatabaseReference
     private lateinit var storageRef: StorageReference
 
     private lateinit var employeeIDCardIV: ImageView
@@ -46,6 +54,7 @@ class RegisterUserActivity : AppCompatActivity() {
     private lateinit var createPasswordTIL: TextInputLayout
     private lateinit var confirmPasswordTIL: TextInputLayout
     private lateinit var useruidText: TextView
+    private lateinit var btCopyText: Button
 
     private lateinit var employeeIDCardUri: Uri
     var idUploaded = false
@@ -78,6 +87,7 @@ class RegisterUserActivity : AppCompatActivity() {
         databaseRef = FirebaseDatabase.getInstance().reference.child("companies")
         storageRef = FirebaseStorage.getInstance().reference.child("employeeIdCards")
         databaseRef2 = FirebaseDatabase.getInstance().reference
+        databaseRefToken = FirebaseDatabase.getInstance().reference//.child("tokens")
 
         fullNameTIL = findViewById(R.id.register_full_name_til)
         emailTIL = findViewById(R.id.register_email_til)
@@ -90,11 +100,22 @@ class RegisterUserActivity : AppCompatActivity() {
 
         agreeCheckBox = findViewById(R.id.register_agree_check_box)
         registerBtn = findViewById(R.id.register_emp_btn)
+        btCopyText = findViewById(R.id.btCopyText)
 
         useruidText = findViewById(R.id.useruid)
         useruidText.text=uuidGenerator()
         agreeCheckBox.setOnClickListener {
             registerBtn.isEnabled = agreeCheckBox.isChecked
+        }
+
+
+
+        btCopyText.setOnClickListener {
+            val textToCopy = useruidText.text
+            val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clipData = ClipData.newPlainText("text", textToCopy)
+            clipboardManager.setPrimaryClip(clipData)
+            Toast.makeText(this,"Copied to Clipboard",Toast.LENGTH_SHORT).show()
         }
 
         registerProgressDialog = ProgressDialog(this)
@@ -287,11 +308,19 @@ class RegisterUserActivity : AppCompatActivity() {
         companyID = organizationTIL.editText!!.text.toString()
         globalVar=companyID
 
-        val company = databaseRef2.child(companyID).child("company")//.child(user.uid)
-        //val employee = company.child(user.uid)
+        val company = databaseRef2.child(companyID).child("company").child(user.uid)
+        FirebaseService.sharedPref2 = getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener{ task ->
+            if(!task.isSuccessful){
+                return@OnCompleteListener
+            }
+            val token = task.result
+            Log.d("FCMTOKEN",token)
+            databaseRefToken.child(companyID).child("tokens").child("company").child("token").setValue(token)
+        })
+        FirebaseMessaging.getInstance().subscribeToTopic(TOPIC2)
         val matches = databaseRef2.child("matches")
         val match = matches.child(user.uid)
-
         //val company = databaseRef2.child(empIDNo).child("company")
         company.child("organization").setValue(orgName)
         company.child("emp_id").setValue(empIDNo)

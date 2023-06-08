@@ -20,6 +20,12 @@ class FirebaseDBService {
         val menuList = ArrayList<MenuItem>()
         val menuDbRef = databaseRef.child(orgID).child("menu")
 
+        menuDbRef.get().addOnSuccessListener {
+            if(it.exists()){
+
+            }
+        }
+
         menuDbRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (snap in snapshot.children) {
