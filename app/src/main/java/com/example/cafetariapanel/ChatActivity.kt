@@ -17,8 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -50,6 +49,7 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var recyclerAdapter: RecyclerCurrentOrderAdapter
     private lateinit var topBarLayout: TextView
     private lateinit var databaseRef: DatabaseReference
+
 
     private var empName = ""
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,8 +108,8 @@ class ChatActivity : AppCompatActivity() {
                     Toast.makeText(this,it.localizedMessage, Toast.LENGTH_LONG).show()
                     chatTxt.setText("")
                 }
-
-            pushChatNotification(customerUID,orderID!!)
+            getOrgID(customerUID)
+            //pushChatNotification(customerUID,orderID!!)
 
         }
 
@@ -136,8 +136,28 @@ class ChatActivity : AppCompatActivity() {
             }
     }
 
-    fun pushChatNotification(customerUID:String,orderID:String){
-        val orgID = sharedPref.getString("emp_org", "11")
+
+    private fun getOrgID(userUID:String){
+
+        val user = FirebaseAuth.getInstance().currentUser!!
+        val databaseRef: DatabaseReference = FirebaseDatabase.getInstance().reference
+
+        databaseRef.child("matches").child(user.uid)
+            .addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val globalOrgID = snapshot.child("organizationID").value.toString()
+
+                    pushChatNotification(globalOrgID,userUID)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
+    }
+
+    fun pushChatNotification(orgID:String,userUID:String){
+        //val orgID = sharedPref.getString("emp_org", "11")
         FirebaseService.sharedPref2 = getSharedPreferences("sharedPref2", Context.MODE_PRIVATE)
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener{ task ->
             if(!task.isSuccessful){
@@ -148,13 +168,13 @@ class ChatActivity : AppCompatActivity() {
 
             FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
 
-            databaseRef.child(orgID!!).child("tokens").child(customerUID)
+            databaseRef.child(orgID).child("tokens").child(userUID)
                 .get().addOnSuccessListener {
                     if(it.exists()){
                         val orgToken = it.child("token").value.toString()
                         sendNotification(
                             PushNotification(
-                                NotificationData("Your have new message!", "Order ID: $orderID"),
+                                NotificationData("Your have new message!", "Check it"),
                                 orgToken)
                         )
                     }

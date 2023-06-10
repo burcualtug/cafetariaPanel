@@ -286,6 +286,8 @@ class MyCurrentOrdersActivity : AppCompatActivity(), RecyclerCurrentOrderAdapter
     }
 
     override fun cancelOrder(position: Int) {
+        //pushCancelOrderNotification(position)
+        getOrgID(position)
         AlertDialog.Builder(this)
             .setTitle("Order Cancellation")
             .setMessage("Are you sure you want to cancel this order?")
@@ -297,7 +299,7 @@ class MyCurrentOrdersActivity : AppCompatActivity(), RecyclerCurrentOrderAdapter
                 val orderUserUID = currentOrderList[position].userUID
                 databaseRef.child(shp!!).child("orders").child(orderUserUID).child(orderIDdb).removeValue()
 
-                pushCancelOrderNotification(position)
+
                 currentOrderList.removeAt(position)
                 recyclerAdapter.notifyItemRemoved(position)
                 recyclerAdapter.notifyItemRangeChanged(position, currentOrderList.size)
@@ -315,8 +317,27 @@ class MyCurrentOrdersActivity : AppCompatActivity(), RecyclerCurrentOrderAdapter
             .create().show()
     }
 
-    fun pushCancelOrderNotification(position: Int){
-        val orgID = sharedPref.getString("emp_org", "11")
+    private fun getOrgID(position:Int){
+
+        val user = FirebaseAuth.getInstance().currentUser!!
+        val databaseRef: DatabaseReference = FirebaseDatabase.getInstance().reference
+
+        databaseRef.child("matches").child(user.uid)
+            .addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val globalOrgID = snapshot.child("organizationID").value.toString()
+
+                    pushCancelOrderNotification(globalOrgID,position)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
+    }
+
+    fun pushCancelOrderNotification(orgID:String, position: Int){
+        //val orgID = sharedPref.getString("emp_org", "11")
         FirebaseService.sharedPref2 = getSharedPreferences("sharedPref2", Context.MODE_PRIVATE)
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener{ task ->
             if(!task.isSuccessful){
@@ -329,7 +350,7 @@ class MyCurrentOrdersActivity : AppCompatActivity(), RecyclerCurrentOrderAdapter
 
             val orderID = currentOrderList[position].orderID
 
-            databaseRef.child(orgID!!).child("tokens").child(currentOrderList[position].userUID)
+            databaseRef.child(orgID).child("tokens").child(currentOrderList[position].userUID)
                 .get().addOnSuccessListener {
                     if(it.exists()){
                         val orgToken = it.child("token").value.toString()

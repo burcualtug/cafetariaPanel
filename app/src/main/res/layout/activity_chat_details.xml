@@ -241,53 +241,7 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:clipToPadding="false"
-            android:orientation="horizontal">
 
-            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                android:id="@+id/current_order_item_cancel_btn"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:elevation="0dp"
-                app:elevation="0dp"
-                android:minHeight="10dp"
-                android:text="@string/cancel_order"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:backgroundTint="#D83838"
-                app:icon="@drawable/ic_cancel"
-                app:iconTint="@color/white"
-                app:iconSize="20dp"
-                app:iconPadding="0dp"
-                android:gravity="center"
-                />
-
-            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                android:id="@+id/current_order_item_show_qr_btn"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:elevation="0dp"
-                app:elevation="0dp"
-                android:minHeight="10dp"
-                android:text="Accept Order"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                app:icon="@drawable/ic_qr_code"
-                app:iconTint="@color/white"
-                app:iconSize="20dp"
-                app:iconPadding="0dp"
-                android:gravity="center"
-                />
-
-        </LinearLayout>
     </LinearLayout>
 
 

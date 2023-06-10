@@ -101,9 +101,9 @@ class ChatDetailsActivity : AppCompatActivity() {
         paymentStatusTV.text = currentItem.paymentStatus
         orderIDTV.text = currentItem.orderID
         orderNoteTV.text = currentItem.orderNote
-//        holder.totalItemPriceTV.text = ("\$%.2f".format(currentItem.totalItemPrice.toFloat())).toString() // "\$%.2f".format(currentItem.totalItemPrice.toString())
-        //      holder.totalTaxTV.text = ("\$%.2f".format(currentItem.tax.toFloat())).toString()
-        //    holder.subTotalTV.text = ("\$%.2f".format(currentItem.subTotal.toFloat())).toString()
+        totalItemPriceTV.text = ("\$%.2f".format(currentItem.totalItemPrice.toFloat())).toString() // "\$%.2f".format(currentItem.totalItemPrice.toString())
+        totalTaxTV.text = ("\$%.2f".format(currentItem.tax.toFloat())).toString()
+        subTotalTV.text = ("\$%.2f".format(currentItem.subTotal.toFloat())).toString()
         orderNoteTV.text=currentItem.orderNote
         addTable(currentItem)
 

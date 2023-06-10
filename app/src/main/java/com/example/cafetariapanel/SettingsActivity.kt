@@ -26,8 +26,8 @@ import services.FirebaseDBService
 
 class SettingsActivity : AppCompatActivity(), MenuApi {
 
-    private lateinit var loadItemImageLL: LinearLayout
-    private lateinit var loadItemImageTV: TextView
+    //private lateinit var loadItemImageLL: LinearLayout
+    //private lateinit var loadItemImageTV: TextView
 
     private lateinit var menuModeLL: LinearLayout
     private lateinit var menuModeTV: TextView
@@ -51,11 +51,11 @@ class SettingsActivity : AppCompatActivity(), MenuApi {
         setContentView(R.layout.activity_settings)
 
         sharedPref = getSharedPreferences("user_profile_details", MODE_PRIVATE)
-        loadItemImageLL = findViewById(R.id.settings_load_item_images_ll)
-        loadItemImageTV = findViewById(R.id.settings_load_item_images_tv)
+        //loadItemImageLL = findViewById(R.id.settings_load_item_images_ll)
+        //loadItemImageTV = findViewById(R.id.settings_load_item_images_tv)
         linkedinImageView = findViewById(R.id.linkedin_logo)
         githubImageView = findViewById(R.id.github_logo)
-        loadItemImageLL.setOnClickListener { updateLoadItemImage() }
+        //loadItemImageLL.setOnClickListener { updateLoadItemImage() }
         linkedinImageView.setOnClickListener { directToLinkedin() }
         githubImageView.setOnClickListener { directToGithub() }
 
@@ -130,7 +130,7 @@ class SettingsActivity : AppCompatActivity(), MenuApi {
             .create().show()
     }
 
-    private fun updateLoadItemImage() {
+    /*private fun updateLoadItemImage() {
         val dialog = AlertDialog.Builder(this)
         dialog.setTitle("Load Item Images")
 
@@ -152,7 +152,7 @@ class SettingsActivity : AppCompatActivity(), MenuApi {
         dialog.setCancelable(false)
         dialog.create()
         dialog.show()
-    }
+    } */
 
     private fun updateMenuMode() {
         val dialog = AlertDialog.Builder(this)
@@ -219,10 +219,10 @@ class SettingsActivity : AppCompatActivity(), MenuApi {
     }
 
     private fun loadUserSettings() {
-        when(sharedPref.getInt("loadItemImages", 0)) {
+        /*when(sharedPref.getInt("loadItemImages", 0)) {
             0 -> loadItemImageTV.text = "On"
             1 -> loadItemImageTV.text = "Off"
-        }
+        }*/
         when(sharedPref.getInt("menuMode", 0)) {
             0 -> menuModeTV.text = "Online"
             1 -> menuModeTV.text = "Offline"
