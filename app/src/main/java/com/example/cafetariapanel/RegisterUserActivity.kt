@@ -330,15 +330,6 @@ class RegisterUserActivity : AppCompatActivity() {
         company.child("reg_date").setValue(getRegDate())
         company.child("emp_id_card_uri").setValue(idCardDownloadUri)
 
-        /*val employee = databaseRef.child(user.uid)
-        employee.child("organization").setValue(orgName)
-        employee.child("emp_id").setValue(empIDNo)
-        employee.child("mobile_no").setValue(mobileNo)
-        employee.child("gender").setValue("none")
-        employee.child("reg_id").setValue(getRegID())
-        employee.child("reg_date").setValue(getRegDate())
-        employee.child("emp_id_card_uri").setValue(idCardDownloadUri)*/
-
         match.child("organizationID").setValue(orgName)
         sendEmailVerification(user)
     }

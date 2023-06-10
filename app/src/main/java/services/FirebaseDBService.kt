@@ -15,17 +15,36 @@ class FirebaseDBService {
 
     private lateinit var sharedPref: SharedPreferences
     private val foodMenu = "food_menu"
+    var globalOrgID:String=""
+
+    fun getOrgID(){
+        val user = FirebaseAuth.getInstance().currentUser!!
+        databaseRef.child("matches").child(user.uid)
+            .addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val globalOrgID = snapshot.child("organizationID").value.toString()
+
+
+                    returnOrgID(globalOrgID)
+                    //loadUserProfile(globalOrgID)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+    }
+    fun returnOrgID(orgID:String){
+        globalOrgID=orgID
+    }
 
     fun readAllMenu(menuApi: MenuApi, requestType: RequestType,orgID:String) {
         val menuList = ArrayList<MenuItem>()
+        getOrgID()
+        Log.d("GLOBALID",globalOrgID)
+        Log.d("GLOBALIDP",orgID)
+
+
         val menuDbRef = databaseRef.child(orgID).child("menu")
-
-        menuDbRef.get().addOnSuccessListener {
-            if(it.exists()){
-
-            }
-        }
-
         menuDbRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (snap in snapshot.children) {

@@ -94,7 +94,7 @@
                 android:id="@+id/category_spinner"
                 android:layout_width="match_parent"
                 android:background="@drawable/spinner_style"
-                style="@style/CustomSpinnerStyle"
+                style="@style/Widget.AppCompat.Spinner.DropDown"
                 android:layout_height="60dp"
                 android:layout_marginBottom="8dp" />
 

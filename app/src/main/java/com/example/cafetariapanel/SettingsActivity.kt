@@ -1,8 +1,11 @@
 package com.example.cafetariapanel
 
+import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -35,10 +38,14 @@ class SettingsActivity : AppCompatActivity(), MenuApi {
     private lateinit var deleteSavedCardsLL: LinearLayout
     private lateinit var deleteOrdersHistoryLL: LinearLayout
 
+    private lateinit var githubImageView: ImageView
+    private lateinit var linkedinImageView: ImageView
+
     private lateinit var sharedPref: SharedPreferences
 
     private lateinit var progressDialog: ProgressDialog
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
@@ -46,14 +53,18 @@ class SettingsActivity : AppCompatActivity(), MenuApi {
         sharedPref = getSharedPreferences("user_profile_details", MODE_PRIVATE)
         loadItemImageLL = findViewById(R.id.settings_load_item_images_ll)
         loadItemImageTV = findViewById(R.id.settings_load_item_images_tv)
+        linkedinImageView = findViewById(R.id.linkedin_logo)
+        githubImageView = findViewById(R.id.github_logo)
         loadItemImageLL.setOnClickListener { updateLoadItemImage() }
+        linkedinImageView.setOnClickListener { directToLinkedin() }
+        githubImageView.setOnClickListener { directToGithub() }
 
         menuModeLL = findViewById(R.id.settings_menu_mode_ll)
         menuModeTV = findViewById(R.id.settings_menu_mode_tv)
         menuModeLL.setOnClickListener { updateMenuMode() }
 
         updateMenuLL = findViewById(R.id.settings_update_menu_ll)
-        updateMenuLL.setOnClickListener { updateMenuForOffline() }
+        updateMenuLL.setOnClickListener { getOrgID() }
 
         deleteMenuLL = findViewById(R.id.settings_delete_menu_ll)
         deleteMenuLL.setOnClickListener { deleteOfflineMenu() }
@@ -70,6 +81,31 @@ class SettingsActivity : AppCompatActivity(), MenuApi {
         findViewById<ImageView>(R.id.settings_go_back_iv).setOnClickListener { onBackPressed() }
     }
 
+    private fun directToGithub(){
+        val i = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/burcualtug"))
+        startActivity(i)
+    }
+
+    private fun directToLinkedin(){
+        val i = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.linkedin.com/in/burcu-altu%C4%9F-5816a11a2/"))
+        startActivity(i)
+    }
+    private fun getOrgID(){
+        val user = FirebaseAuth.getInstance().currentUser!!
+        val databaseRef: DatabaseReference = FirebaseDatabase.getInstance().reference
+
+        databaseRef.child("matches").child(user.uid)
+            .addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val globalOrgID = snapshot.child("organizationID").value.toString()
+                    Log.d("GLBID",globalOrgID)
+
+                    updateMenuForOffline(globalOrgID)
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
     private fun deleteAllTheOrdersHistoryDetails() {
         val db = DatabaseHandler(this)
         AlertDialog.Builder(this)
@@ -142,7 +178,7 @@ class SettingsActivity : AppCompatActivity(), MenuApi {
         dialog.show()
     }
 
-    private fun updateMenuForOffline() {
+    private fun updateMenuForOffline(orgID:String) {
         progressDialog = ProgressDialog(this)
         progressDialog.setTitle("Updating...")
         progressDialog.setMessage("Offline Menu is preparing for you...")
@@ -151,7 +187,8 @@ class SettingsActivity : AppCompatActivity(), MenuApi {
         val databaseRef2: DatabaseReference = FirebaseDatabase.getInstance().reference
 
         val shp = sharedPref.getString("emp_org", "11")
-        FirebaseDBService().readAllMenu(this, RequestType.OFFLINE_UPDATE,shp!!)
+        val shp1 = "02278903"
+        FirebaseDBService().readAllMenu(this, RequestType.OFFLINE_UPDATE,orgID)
     }
 
     override fun onFetchSuccessListener(list: ArrayList<MenuItem>, requestType: RequestType) {

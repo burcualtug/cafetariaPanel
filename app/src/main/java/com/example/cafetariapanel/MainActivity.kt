@@ -102,14 +102,15 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        progressDialog =  ProgressDialog(this)
         sharedPref = getSharedPreferences("user_profile_details", MODE_PRIVATE)
         auth = FirebaseAuth.getInstance()
         databaseRef = FirebaseDatabase.getInstance().reference
         refreshPage()
         db.clearCartTable()
-        getOrgID()
-        //loadProfile()
+
+        loadProfile()
+        //getOrgID()
         loadNavigationDrawer()
         loadMenu()
         loadSearchTask()
@@ -143,16 +144,16 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
             .addListenerForSingleValueEvent(object: ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val globalOrgID = snapshot.child("organizationID").value.toString()
-
                     Log.d("GLBID",globalOrgID)
-                    loadProfile(globalOrgID)
+
                     loadOnlineMenu(globalOrgID)
+                    //loadProfile(globalOrgID)
                 }
 
                 override fun onCancelled(error: DatabaseError) {}
             })
     }
-    private fun loadProfile(orgID:String) {
+    private fun loadProfile() {
         val user = auth.currentUser!!
         this.empName = user.displayName!!
         this.empEmail = user.email!!
@@ -161,7 +162,7 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
             findViewById<TextView>(R.id.nav_header_user_name).text = this.empName
         }, 1000)
 
-        databaseRef.child(orgID).child("company")
+        databaseRef.child("company")
             .child(user.uid).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     empGender = snapshot.child("gender").value.toString()
@@ -361,10 +362,10 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
                         )
                     }, drawerDelay)
                 }
-                R.id.nav_update_menu -> {
+                /*R.id.nav_update_menu -> {
                     drawerLayout.closeDrawer(GravityCompat.START)
                     updateOfflineFoodMenu()
-                }
+                }*/
                 R.id.nav_settings -> {
                     drawerLayout.closeDrawer(GravityCompat.START)
                     Handler().postDelayed({
