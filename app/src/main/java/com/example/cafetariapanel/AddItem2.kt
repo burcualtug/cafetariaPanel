@@ -20,6 +20,7 @@ import com.google.firebase.storage.StorageReference
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import datamodels.IdCardModel
+import datamodels.MenuItem
 import kotlinx.android.synthetic.main.activity_add_item2.*
 import java.math.BigInteger
 import java.util.*
@@ -142,7 +143,7 @@ class AddItem2 : AppCompatActivity() {
                 Toast.makeText(this, "ID Card Uploaded!!", Toast.LENGTH_SHORT).show()
                 reference.downloadUrl.addOnSuccessListener { uri ->
                     val model = uri.toString() // IdCardModel(uri.toString())
-                    registerMenu(model)
+                    getOrgID(model)//registerMenu(model)
                 }
             }
             .addOnFailureListener { e -> // Error, Image not uploaded
@@ -159,14 +160,32 @@ class AddItem2 : AppCompatActivity() {
             }
     }
 
+    fun getOrgID(idCardDownloadUri: String){
+        val user = FirebaseAuth.getInstance().currentUser!!
+        val databaseRef: DatabaseReference = FirebaseDatabase.getInstance().reference
+
+        databaseRef.child("matches").child(user.uid)
+            .addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val globalOrgID = snapshot.child("organizationID").value.toString()
+
+                    registerMenu(idCardDownloadUri,globalOrgID)
+
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
+
     fun turnBack(view: View) {onBackPressed()}
-    fun registerMenu(idCardDownloadUri: String){
+
+    fun registerMenu(idCardDownloadUri: String, orgID:String){
         val catSpin = category_spinner.selectedItem.toString()
         Toast.makeText(this,catSpin,Toast.LENGTH_SHORT).show()
         Log.d("CATEGORY",catSpin)
-        val orgID = sharedPref.getString("emp_org", "11")
+        //val orgID = sharedPref.getString("emp_org", "11")
         val uuid=uuidGenerator()
-        val company = databaseRef.child(orgID!!).child("menu").child(uuid)
+        val company = databaseRef.child(orgID).child("menu").child(uuid)
         val name = itemName.editText!!.text.toString()
         val description = itemDescription.editText!!.text.toString()
         val price = itemPrice.editText!!.text.toString().toFloat()

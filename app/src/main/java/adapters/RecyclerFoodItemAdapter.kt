@@ -33,7 +33,7 @@ class RecyclerFoodItemAdapter(
         fun onItemClick(item: MenuItem)
         fun onPlusBtnClick(item: MenuItem)
         fun onMinusBtnClick(item: MenuItem)
-        fun deleteItem(item: MenuItem)
+        fun getOrgIDDelete(item: MenuItem)//fun deleteItem(item: MenuItem)
     }
 
     class ItemListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -69,42 +69,13 @@ class RecyclerFoodItemAdapter(
         holder.itemShortDesc.text = currentItem.itemShortDesc
         Log.d("IMAGEURL",currentItem.imageUrl)
 
-        /*var imageURL: String=currentItem.imageUrl.toString().substring(2)
-        imageURL = imageURL.substring(0,(imageURL.length-1))
-        Log.d("IMAGEURL2",currentItem.imageUrl)*/
-        //val url: String = "https://firebasestorage.googleapis.com/v0/b/cafetariaapp.appspot.com/o/itemImages%2F0040009140378551494505087461418921131744.jpeg?alt=media&token=af36119a-07ac-4781-884c-e46da85176a6"
-
         Picasso.get().load(currentItem.imageUrl).into(holder.itemImageIV)
 
-        /*Glide.with(context)
-            .load(currentItem.imageUrl)
-            .into(holder.itemImageIV)*/
-
-        /*try { // loading ID Card
-            Picasso.get().load(currentItem.imageUrl).into(holder.itemImageIV)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }*/
 
         holder.itemDelete.setOnClickListener {
-            listener.deleteItem(itemList[position])
+            listener.getOrgIDDelete(itemList[position])
+        //listener.deleteItem(itemList[position])
         }
-        /*holder.itemQuantityTV.text = currentItem.quantity.toString()
-
-        holder.itemQuantityIncreaseIV.setOnClickListener {
-            val n = currentItem.quantity
-            holder.itemQuantityTV.text = (n+1).toString()
-
-            listener.onPlusBtnClick(currentItem)
-        }
-
-        holder.itemQuantityDecreaseIV.setOnClickListener {
-            val n = currentItem.quantity
-            if (n == 0) return@setOnClickListener
-            holder.itemQuantityTV.text = (n-1).toString()
-
-            listener.onMinusBtnClick(currentItem)
-        }*/
 
         holder.itemView.setOnClickListener {
             listener.onItemClick(currentItem)

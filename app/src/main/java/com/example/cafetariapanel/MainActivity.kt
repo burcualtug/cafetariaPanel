@@ -153,6 +153,24 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
                 override fun onCancelled(error: DatabaseError) {}
             })
     }
+
+     override fun getOrgIDDelete(item: MenuItem){
+        val user = FirebaseAuth.getInstance().currentUser!!
+        val databaseRef: DatabaseReference = FirebaseDatabase.getInstance().reference
+
+        databaseRef.child("matches").child(user.uid)
+            .addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val globalOrgID = snapshot.child("organizationID").value.toString()
+                    Log.d("GLBID",globalOrgID)
+
+                    deleteItem(item,globalOrgID)
+
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
     private fun loadProfile() {
         val user = auth.currentUser!!
         this.empName = user.displayName!!
@@ -426,12 +444,12 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
 
     private fun shareApp() {
         //startActivity( Intent(this,NotificationActivity::class.java))
-        /*val message =
+        val message =
             "Try out this awesome App on Google Play!\nhttps://play.google.com/store/apps/details?id=$packageName"
         val intent = Intent(Intent.ACTION_SEND)
         intent.putExtra(Intent.EXTRA_TEXT, message)
         intent.type = "text/plain"
-        startActivity(Intent.createChooser(intent, "Share To"))*/
+        startActivity(Intent.createChooser(intent, "Share To"))
     }
 
     fun showBottomDialog(view: View) {
@@ -534,15 +552,21 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
         }
     }
 
-    override fun deleteItem(item: MenuItem) {
+
+
+
+    fun deleteItem(item: MenuItem,orgID: String) {
         AlertDialog.Builder(this)
         .setTitle("Menu Item Deleting")
         .setMessage("Are you sure you want to delete this item?")
         .setPositiveButton("Yes, Delete Item", DialogInterface.OnClickListener { dialogInterface, _ ->
             //val result = DatabaseHandler(this).deleteCurrentOrderRecord(item.itemID)
 
+            Log.d("TAGORG",orgID)
+            Log.d("TAGITEM",item.itemID.toString())
+
             val shp = sharedPref.getString("emp_org", "11")
-            databaseRef.child(shp!!).child("menu").child(item.itemID).removeValue()
+            databaseRef.child(orgID).child("menu").child(item.itemID).removeValue()
 
             //currentOrderList.removeAt(position)
             //recyclerFoodAdapter.notifyItemRemoved(item)
