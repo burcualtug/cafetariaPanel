@@ -64,7 +64,8 @@ class MyCurrentOrdersActivity : AppCompatActivity(), RecyclerCurrentOrderAdapter
 
         refreshPage()
 
-        loadCurrentOrdersFromDatabase()
+        //loadCurrentOrdersFromDatabase()
+        getOrgIDLoad()
     }
 
     fun refreshPage(){
@@ -79,14 +80,32 @@ class MyCurrentOrdersActivity : AppCompatActivity(), RecyclerCurrentOrderAdapter
             swipeRefresh.isRefreshing=false
         }
     }
+    private fun getOrgIDLoad(){
 
-    private fun loadCurrentOrdersFromDatabase() {
+        val user = FirebaseAuth.getInstance().currentUser!!
+        val databaseRef: DatabaseReference = FirebaseDatabase.getInstance().reference
+
+        databaseRef.child("matches").child(user.uid)
+            .addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val globalOrgID = snapshot.child("organizationID").value.toString()
+
+                    loadCurrentOrdersFromDatabase(globalOrgID)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
+    }
+
+    private fun loadCurrentOrdersFromDatabase(orgID:String) {
 
         val db = DatabaseHandler(this)
         val data = db.readCurrentOrdersData()
 
-        val shp = sharedPref.getString("emp_org", "11")
-        val ordersDbRef = databaseRef.child(shp!!).child("orders")
+        //val shp = sharedPref.getString("emp_org", "11")
+        val ordersDbRef = databaseRef.child(orgID).child("orders")
 
         /*if(data.isEmpty()) {
             return
