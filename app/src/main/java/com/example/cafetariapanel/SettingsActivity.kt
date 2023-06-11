@@ -15,8 +15,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.database.BuildConfig
+import com.google.firebase.ktx.Firebase
 import datamodels.MenuItem
 import interfaces.MenuApi
 import interfaces.RequestType
@@ -38,12 +40,17 @@ class SettingsActivity : AppCompatActivity(), MenuApi {
     private lateinit var deleteSavedCardsLL: LinearLayout
     private lateinit var deleteOrdersHistoryLL: LinearLayout
 
+    private lateinit var deleteAcc : LinearLayout
+
     private lateinit var githubImageView: ImageView
     private lateinit var linkedinImageView: ImageView
+
 
     private lateinit var sharedPref: SharedPreferences
 
     private lateinit var progressDialog: ProgressDialog
+
+    private val db = DatabaseHandler(this)
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,9 +62,11 @@ class SettingsActivity : AppCompatActivity(), MenuApi {
         //loadItemImageTV = findViewById(R.id.settings_load_item_images_tv)
         linkedinImageView = findViewById(R.id.linkedin_logo)
         githubImageView = findViewById(R.id.github_logo)
+        deleteAcc = findViewById(R.id.settings_delete_account)
         //loadItemImageLL.setOnClickListener { updateLoadItemImage() }
         linkedinImageView.setOnClickListener { directToLinkedin() }
         githubImageView.setOnClickListener { directToGithub() }
+        deleteAcc.setOnClickListener { deleteAccount() }
 
         menuModeLL = findViewById(R.id.settings_menu_mode_ll)
         menuModeTV = findViewById(R.id.settings_menu_mode_tv)
@@ -79,6 +88,43 @@ class SettingsActivity : AppCompatActivity(), MenuApi {
 
         loadUserSettings()
         findViewById<ImageView>(R.id.settings_go_back_iv).setOnClickListener { onBackPressed() }
+    }
+
+    private fun deleteAccount(){
+        val user = FirebaseAuth.getInstance().currentUser!!
+
+        AlertDialog.Builder(this)
+            .setMessage("Are you sure you want to delete your account??")
+            .setPositiveButton("Yes, Delete My Account", DialogInterface.OnClickListener {dialogInterface, _ ->
+                user?.delete()
+                    ?.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            logOutUser()
+                        } else {
+                            // Hesap silme hatası oluştu
+                        }
+                    }
+                dialogInterface.dismiss()
+            })
+            .create().show()
+    }
+
+
+    private fun logOutUser() {
+        Firebase.auth.signOut()
+
+        getSharedPreferences("settings", MODE_PRIVATE).edit().clear()
+            .apply() //deleting settings from offline
+        getSharedPreferences("user_profile_details", MODE_PRIVATE).edit().clear()
+            .apply() //deleting user details from offline
+
+        //removing tables
+        db.dropCurrentOrdersTable()
+        db.dropOrderHistoryTable()
+        db.clearSavedCards()
+
+        startActivity(Intent(this, LoginUserActivity::class.java))
+        finish()
     }
 
     private fun directToGithub(){
