@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
         refreshPage()
         db.clearCartTable()
 
-        loadProfile()
+        getOrgIDProfile() //loadProfile()
         //getOrgID()
         loadNavigationDrawer()
         loadMenu()
@@ -134,6 +134,24 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
             Toast.makeText(this,"Page refreshed!",Toast.LENGTH_SHORT).show()
             swipeRefresh.isRefreshing=false
         }
+    }
+
+    private fun getOrgIDProfile(){
+
+        val user = FirebaseAuth.getInstance().currentUser!!
+        val databaseRef: DatabaseReference = FirebaseDatabase.getInstance().reference
+
+        databaseRef.child("matches").child(user.uid)
+            .addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val globalOrgID = snapshot.child("organizationID").value.toString()
+                    loadProfile(globalOrgID)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
     }
 
     private fun getOrgID(){
@@ -171,7 +189,7 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
                 override fun onCancelled(error: DatabaseError) {}
             })
     }
-    private fun loadProfile() {
+    private fun loadProfile(orgID:String) {
         val user = auth.currentUser!!
         this.empName = user.displayName!!
         this.empEmail = user.email!!
@@ -180,7 +198,7 @@ class MainActivity : AppCompatActivity(), RecyclerFoodItemAdapter.OnItemClickLis
             findViewById<TextView>(R.id.nav_header_user_name).text = this.empName
         }, 1000)
 
-        databaseRef.child("company")
+        databaseRef.child(orgID).child("company")
             .child(user.uid).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     empGender = snapshot.child("gender").value.toString()
